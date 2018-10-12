@@ -1,6 +1,6 @@
 # Mutants Detector
 
-[![Build Status](https://travis-ci.org/pferraris/mutant.svg?branch=master)](https://travis-ci.org/pferraris/mutant)
+[![Build Status](https://travis-ci.org/pferraris/mutants.svg?branch=master)](https://travis-ci.org/pferraris/mutants)
 [![codecov](https://codecov.io/gh/pferraris/mutants/branch/master/graph/badge.svg)](https://codecov.io/gh/pferraris/mutants)
 
 API to detect mutants based on their DNA.
