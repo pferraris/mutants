@@ -3,10 +3,15 @@ package ar.com.pabloferraris.mutants.detection;
 public class DnaException extends Exception {
 	private static final long serialVersionUID = -8629749391921167060L;
 
+	public static final int NULL_MATRIX = 1000;
 	public static final int EMPTY_MATRIX = 1001;
 	public static final int EMPTY_LINE = 1002;
 	public static final int DISTINCT_SIZE = 1003;
 	
+	public static DnaException nullMatrix() {
+		return new DnaException("DNA matrix cannot be null", NULL_MATRIX);
+	}
+
 	public static DnaException emptyMatrix() {
 		return new DnaException("DNA matrix must have lines with nitrogenous bases", EMPTY_MATRIX);
 	}

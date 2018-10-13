@@ -38,6 +38,14 @@ class DetectorTests {
 	}
 
 	@Test
+	@DisplayName("Null DNA")
+	void nullDna() {
+		String[] dna = null;
+		DnaException ex = assertThrows(DnaException.class, () -> detector.isMutant(dna));
+		assertEquals(1000, ex.getCauseCode(), "Cause code must be 1000");
+	}
+
+	@Test
 	@DisplayName("Empty DNA")
 	void emptyDna() {
 		String[] dna = {};

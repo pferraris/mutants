@@ -39,6 +39,11 @@ public final class DnaValidator {
 		// Built in validations
 
 		putValidation(
+				dna -> dna != null,
+				DnaException.nullMatrix()
+		);
+
+		putValidation(
 				dna -> dna.length > 0,
 				DnaException.emptyMatrix()
 		);
