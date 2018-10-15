@@ -1,71 +1,75 @@
 package ar.com.pabloferraris.mutants.detection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import ar.com.pabloferraris.mutants.detection.Detector;
 import ar.com.pabloferraris.mutants.detection.DnaException;
 
-class DetectorTests {
+public class DetectorTests {
 
 	static Detector detector;
 
-	@BeforeAll
-	static void initialize() {
+	@BeforeClass
+	public static void initialize() {
 		detector = new Detector();
 	}
 
 	@Test
-	@DisplayName("Detects a mutant")
-	void detectMutant() throws DnaException {
+	public void detectsMutant() throws DnaException {
 		String[] dna = { "ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG" };
-		boolean expected = true;
 		boolean result = detector.isMutant(dna);
-		assertEquals(expected, result, "Must detect a mutant based in his DNA");
+		assertTrue("Result must be true", result);
 	}
 
 	@Test
-	@DisplayName("Detects a human")
-	void detectHuman() throws DnaException {
+	public void detectsHuman() throws DnaException {
 		String[] dna = { "ATGCGA", "CAGTGC", "TTATTT", "AGACGG", "GCGTCA", "TCACTG" };
-		boolean expected = false;
 		boolean result = detector.isMutant(dna);
-		assertEquals(expected, result, "Must detect a human based in his DNA");
+		assertFalse("Result must be false", result);
 	}
 
 	@Test
-	@DisplayName("Null DNA")
-	void nullDna() {
+	public void nullDna() {
 		String[] dna = null;
-		DnaException ex = assertThrows(DnaException.class, () -> detector.isMutant(dna));
-		assertEquals(1000, ex.getCauseCode(), "Cause code must be 1000");
+		try {
+			detector.isMutant(dna);
+		} catch (DnaException ex) {
+			assertEquals("Cause code must be 1000", 1000, ex.getCauseCode());
+		}
 	}
 
 	@Test
-	@DisplayName("Empty DNA")
-	void emptyDna() {
+	public void emptyDna() {
 		String[] dna = {};
-		DnaException ex = assertThrows(DnaException.class, () -> detector.isMutant(dna));
-		assertEquals(1001, ex.getCauseCode(), "Cause code must be 1001");
+		try {
+			detector.isMutant(dna);
+		} catch (DnaException ex) {
+			assertEquals("Cause code must be 1001", 1001, ex.getCauseCode());
+		}
 	}
 
 	@Test
-	@DisplayName("Empty first line in DNA")
-	void emptyFirstLine() {
+	public void emptyFirstLine() {
 		String[] dna = { "", "" };
-		DnaException ex = assertThrows(DnaException.class, () -> detector.isMutant(dna));
-		assertEquals(1002, ex.getCauseCode(), "Cause code must be 1002");
+		try {
+			detector.isMutant(dna);
+		} catch (DnaException ex) {
+			assertEquals("Cause code must be 1002", 1002, ex.getCauseCode());
+		}
 	}
 
 	@Test
-	@DisplayName("Diferent size in lines")
-	void diferentSizeInLines() {
+	public void diferentSizeInLines() {
 		String[] dna = { "ATGCGA", "CA", "TTATGT", "AGAAGG", "CCCCTA", "TC" };
-		DnaException ex = assertThrows(DnaException.class, () -> detector.isMutant(dna));
-		assertEquals(1003, ex.getCauseCode(), "Cause code must be 1003");
+		try {
+			detector.isMutant(dna);
+		} catch (DnaException ex) {
+			assertEquals("Cause code must be 1003", 1003, ex.getCauseCode());
+		}
 	}
 }

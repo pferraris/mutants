@@ -1,26 +1,25 @@
 package ar.com.pabloferraris.mutants.detection.nitrogenousBases;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import ar.com.pabloferraris.mutants.detection.DetectionStrategy;
 import ar.com.pabloferraris.mutants.detection.nitrogenousBases.UnravelNitrogenousBasesDetectionStrategy;
 
-class UnravelNitrogenousBasesDetectionStrategyTests {
+public class UnravelNitrogenousBasesDetectionStrategyTests {
 
 	static DetectionStrategy strategy;
 	static Method unravel;
 
-	@BeforeAll
-	static void initialize() {
+	@BeforeClass
+	public static void initialize() {
 		strategy = new NitrogenousBasesDetectionStrategyBuilder()
 				.withStrategy(UnravelNitrogenousBasesDetectionStrategy.class)
 				.withCount(2)
@@ -44,8 +43,7 @@ class UnravelNitrogenousBasesDetectionStrategyTests {
 	}
 
 	@Test
-	@DisplayName("Unravel DNA matrix")
-	void unravel() {
+	public void unravelDnaMatrix() {
 		String[] dna = {
 				"ABC",
 				"DEF",
@@ -63,8 +61,7 @@ class UnravelNitrogenousBasesDetectionStrategyTests {
 	}
 
 	@Test
-	@DisplayName("Unravel matrix with minSize = 2")
-	void unravelWithMinSize() {
+	public void unravelDnaMatrixWithMinSize() {
 		String[] dna = {
 				"ABC",
 				"DEF",
@@ -83,26 +80,36 @@ class UnravelNitrogenousBasesDetectionStrategyTests {
 	}
 
 	@Test
-	@DisplayName("Find at least 2 sequences of at least 3 equals characters in a string list")
-	void findSequencies() {
+	public void findTwoSequenciesOfThreeCharacters() {
 		String[] source = {
 				"CABD",
 				"BCAC",
 				"BBCD",
 				"BBCC" };
 		boolean result = strategy.detect(source);
-		assertTrue(result, "Must be true");
+		assertTrue("Result must be true", result);
 	}
 	
 	@Test
-	@DisplayName("Cannot find any sequence of at least 3 equals characters in a string list")
-	void cannotFindSequencies() {
+	public void cannotFindAnySequence() {
 		String[] source = {
 				"CABD",
 				"BAAC",
 				"DBCD",
 				"BBCC" };
 		boolean result = strategy.detect(source);
-		assertFalse(result, "Must be false");
+		assertFalse("Result must be false", result);
+	}
+	
+	@Test
+	public void findOnlyOneSequenceOfThreeCharacters() {
+		String[] source = {
+				"CABD",
+				"BCAC",
+				"DBCD",
+				"BBCC"
+		};
+		boolean result = strategy.detect(source);
+		assertFalse("Result must be false", result);
 	}
 }
