@@ -15,7 +15,6 @@ import javax.ws.rs.core.Response.Status;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 
-import ar.com.pabloferraris.mutants.detection.DnaException;
 import ar.com.pabloferraris.mutants.rest.domain.Specimen;
 
 public class MutantResourceTests extends JerseyTest {
