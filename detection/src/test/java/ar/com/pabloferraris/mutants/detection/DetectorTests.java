@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import ar.com.pabloferraris.mutants.detection.Detector;
 import ar.com.pabloferraris.mutants.detection.DnaException;
+import ar.com.pabloferraris.mutants.detection.nitrogenousBases.NitrogenousBasesDetectionStrategyBuilder;
+import ar.com.pabloferraris.mutants.detection.nitrogenousBases.UnravelNitrogenousBasesDetectionStrategy;
 
 public class DetectorTests {
 
@@ -19,6 +21,16 @@ public class DetectorTests {
 		detector = new Detector();
 	}
 
+	@Test
+	public void changeStrategy() {
+		Detector detector = new Detector();
+		DetectionStrategy strategy = new NitrogenousBasesDetectionStrategyBuilder()
+				.withStrategy(UnravelNitrogenousBasesDetectionStrategy.class)
+				.build();
+		detector.setStrategy(strategy);
+		assertEquals(UnravelNitrogenousBasesDetectionStrategy.class, detector.getStrategy().getClass());
+	}
+	
 	@Test
 	public void detectsMutant() throws DnaException {
 		String[] dna = { "ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG" };
@@ -70,6 +82,16 @@ public class DetectorTests {
 			detector.isMutant(dna);
 		} catch (DnaException ex) {
 			assertEquals("Cause code must be 1003", 1003, ex.getCauseCode());
+		}
+	}
+
+	@Test
+	public void invalidNitrogenousBases() {
+		String[] dna = { "ATG", "CAB", "TTA" };
+		try {
+			detector.isMutant(dna);
+		} catch (DnaException ex) {
+			assertEquals("Cause code must be 1004", 1004, ex.getCauseCode());
 		}
 	}
 }

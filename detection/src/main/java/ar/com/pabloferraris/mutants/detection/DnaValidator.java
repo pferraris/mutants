@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * Ensures a valid DNA sample, sequentially checking a list of validations.
@@ -56,6 +57,12 @@ public final class DnaValidator {
 		putValidation(
 				dna -> !Arrays.stream(dna).skip(1).anyMatch(x -> x.length() != dna[0].length()),
 				DnaException.distinctSize()
+		);
+
+		Pattern validNB = Pattern.compile("^[ATCGatcg]*$");
+		putValidation(
+				dna -> Arrays.stream(dna).allMatch(x -> validNB.matcher(x).matches()),
+				DnaException.invalidNitrogenousBase()
 		);
 	}
 
