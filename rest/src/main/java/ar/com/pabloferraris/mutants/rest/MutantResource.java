@@ -15,6 +15,8 @@ import javax.ws.rs.core.Response.Status;
 
 import ar.com.pabloferraris.mutants.detection.Detector;
 import ar.com.pabloferraris.mutants.detection.DnaException;
+import ar.com.pabloferraris.mutants.persistence.PersistenceStrategy;
+import ar.com.pabloferraris.mutants.persistence.domain.DetectionResult;
 import ar.com.pabloferraris.mutants.rest.domain.Specimen;
 
 /**
@@ -26,16 +28,16 @@ public class MutantResource {
 	@Inject
 	private Detector detector;
 
+	@Inject
+	private PersistenceStrategy persistence;
+
 	/**
 	 * Check if service is alive
 	 * @return Response with status code 200 and detector strategy in use
 	 */
 	@GET
-	@Produces("application/vnd.mutants-v1+json")
 	public Response isAlive() {
-		Map<String, Object> entity = new Hashtable<String, Object>();
-		entity.put("strategy", detector.getStrategy().getClass().getName());
-		return Response.ok().entity(entity).build();
+		return Response.ok().build();
 	}
 
 	/**
@@ -53,18 +55,22 @@ public class MutantResource {
 				entity.put("message", "Request body cannot be null");
 				return Response.status(Status.BAD_REQUEST).entity(entity).build();
 			}
-			if (detector.isMutant(specimen.getDna())) {
+			DetectionResult result = new DetectionResult();
+			result.setDna(specimen.getDna());
+			result.setMutant(detector.isMutant(specimen.getDna()));
+			persistence.add(result);
+			if (result.isMutant()) {
 				return Response.ok().build();
 			} else {
 				return Response.status(Status.FORBIDDEN).entity("").build();
 			}
-		} catch (DnaException ex) {
+		} catch (DnaException e) {
 			Map<String, Object> entity = new Hashtable<String, Object>();
-			entity.put("causeCode", ex.getCauseCode());
-			entity.put("message", ex.getMessage());
+			entity.put("causeCode", e.getCauseCode());
+			entity.put("message", e.getMessage());
 			return Response.status(Status.BAD_REQUEST).entity(entity).build();
-		} catch (Exception ex) {
-			return Response.serverError().entity(ex).build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e).build();
 		}
 	}
 }

@@ -6,6 +6,8 @@ public class MutantsApplication extends ResourceConfig {
 
 	public MutantsApplication() {
 		register(new DetectorBinder());
+		register(new PersistenceBinder());
+		register(new StatsCountBinder());
 		packages(true, "ar.com.pabloferraris.mutants.rest");
 	}
 	

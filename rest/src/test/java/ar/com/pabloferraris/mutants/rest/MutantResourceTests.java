@@ -12,16 +12,33 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.glassfish.jersey.internal.inject.AbstractBinder;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import ar.com.pabloferraris.mutants.persistence.PersistenceStrategy;
 import ar.com.pabloferraris.mutants.rest.domain.Specimen;
 
 public class MutantResourceTests extends JerseyTest {
 
+	private PersistenceStrategy persistence;
+	
 	@Override
 	protected Application configure() {
-		return new MutantsApplication();
+		AbstractBinder persistenceBinder = new AbstractBinder() {
+			@Override
+			protected void configure() {
+				persistence = Mockito.mock(PersistenceStrategy.class);
+				bind(persistence).to(PersistenceStrategy.class);
+			}
+		};
+
+		return new ResourceConfig()
+				.register(new DetectorBinder())
+				.register(persistenceBinder)
+				.packages(true, "ar.com.pabloferraris.mutants.rest");
 	}
 	
 	@Test
