@@ -51,6 +51,7 @@ public class RabbitDetectionResultConsumer implements DetectionResultConsumer {
 		conn = factory.newConnection();
 		channel = conn.createChannel();
 		try {
+			channel.exchangeDeclare(exchangeName, "fanout", true);
 			channel.queueDeclare(queueName, true, false, false, null);
 			channel.queueBind(queueName, exchangeName, "");
 		} catch (Exception e) {
