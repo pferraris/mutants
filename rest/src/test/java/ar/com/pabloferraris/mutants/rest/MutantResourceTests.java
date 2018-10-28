@@ -42,12 +42,6 @@ public class MutantResourceTests extends JerseyTest {
 	}
 	
 	@Test
-	public void isAlive() {
-		Response response = target("mutant").request().get();
-        assertTrue(response.getStatus() == Status.OK.getStatusCode());
-	}
-
-	@Test
 	public void detectsMutant() {
 		final Specimen specimen = new Specimen();
 		specimen.setDna(new String [] { "ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG" });

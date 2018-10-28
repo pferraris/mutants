@@ -51,7 +51,7 @@ public class UnravelNitrogenousBasesDetectionStrategy extends NitrogenousBasesDe
 	 * @return String list with each of vertical, horizontal & obliquous lines in
 	 *         the matrix
 	 */
-	private List<String> unravel(String[] source, int minSize) {
+	List<String> unravel(String[] source, int minSize) {
 		List<String> result = new ArrayList<String>();
 		int n = source.length;
 		int m = source[0].length();

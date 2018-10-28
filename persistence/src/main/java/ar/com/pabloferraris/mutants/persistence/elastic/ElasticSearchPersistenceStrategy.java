@@ -27,11 +27,14 @@ public class ElasticSearchPersistenceStrategy implements PersistenceStrategy {
 
 	@Override
 	public void add(DetectionResult result) throws IOException {
+		client.index(createRequest(result), RequestOptions.DEFAULT);
+	}
+	
+	IndexRequest createRequest(DetectionResult result) {
 		String index = String.valueOf(result.isMutant());
 		String id = DnaHashHelper.getHash(result.getDna());
-		IndexRequest request = new IndexRequest(index, "doc", id)
+		return new IndexRequest(index, "doc", id)
 				.source("dna", result.getDna(),
 						"isMutant",	result.isMutant());
-		client.index(request, RequestOptions.DEFAULT);
 	}
 }

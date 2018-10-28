@@ -4,42 +4,20 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import ar.com.pabloferraris.mutants.detection.DetectionStrategy;
 import ar.com.pabloferraris.mutants.detection.nitrogenousBases.UnravelNitrogenousBasesDetectionStrategy;
 
 public class UnravelNitrogenousBasesDetectionStrategyTests {
 
-	static DetectionStrategy strategy;
-	static Method unravel;
+	static UnravelNitrogenousBasesDetectionStrategy strategy;
 
 	@BeforeClass
 	public static void initialize() {
-		strategy = new NitrogenousBasesDetectionStrategyBuilder()
-				.withStrategy(UnravelNitrogenousBasesDetectionStrategy.class)
-				.withCount(2)
-				.withSize(3)
-				.build();
-		try {
-			unravel = UnravelNitrogenousBasesDetectionStrategy.class.getDeclaredMethod("unravel", String[].class, int.class);
-			unravel.setAccessible(true);
-		} catch (Exception ex) {
-			unravel = null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	static List<String> unravelProxy(String[] source, int minSize) {
-		try {
-			return (List<String>) unravel.invoke(strategy, source, minSize);
-		} catch (Exception ex) {
-			return null;
-		}
+		strategy = new UnravelNitrogenousBasesDetectionStrategy();
+		strategy.setSequenceCount(2);
+		strategy.setSequenceSize(3);
 	}
 
 	@Test
@@ -55,7 +33,7 @@ public class UnravelNitrogenousBasesDetectionStrategyTests {
 				"AEI", "A", "DH", "DB", "G", "GEC",
 				"BF", "HF",	"C", "I"
 		};
-		String[] result = unravelProxy(dna, 1).toArray(new String[0]);
+		String[] result = strategy.unravel(dna, 1).toArray(new String[0]);
 
 		assertArrayEquals(expected, result);
 	}
@@ -74,7 +52,7 @@ public class UnravelNitrogenousBasesDetectionStrategyTests {
 				"BF", "HF"
 		};
 		int minSize = 2;
-		String[] result = unravelProxy(dna, minSize).toArray(new String[0]);
+		String[] result = strategy.unravel(dna, minSize).toArray(new String[0]);
 
 		assertArrayEquals(expected, result);
 	}

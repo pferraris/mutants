@@ -4,7 +4,10 @@ import ar.com.pabloferraris.mutants.persistence.PersistenceStrategy;
 import ar.com.pabloferraris.mutants.persistence.domain.DetectionResult;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.ConnectionFactory;
@@ -16,34 +19,25 @@ public class RabbitAsyncPersistenceStrategy implements PersistenceStrategy {
 
 	private static final String exchangeName = "DetectionResults";
 	private static final Charset utf8 = Charset.forName("UTF-8");
+	private static final Gson gson = new Gson();
 
-	private Gson gson;
+	private ConnectionFactory factory;
 	private Connection conn;
 
-	public RabbitAsyncPersistenceStrategy(String connectionString) throws Exception {
-		gson = new Gson();
-		ConnectionFactory factory = new ConnectionFactory();
+	public RabbitAsyncPersistenceStrategy(String connectionString)
+			throws KeyManagementException, NoSuchAlgorithmException, URISyntaxException {
+		factory = new ConnectionFactory();
 		factory.setUri(connectionString);
 		factory.setAutomaticRecoveryEnabled(true);
-		conn = factory.newConnection();
-		initialize();
 	}
 
-	private void initialize() {
-		try (Channel channel = conn.createChannel()) {
-			channel.exchangeDeclare(exchangeName, "fanout", true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	RabbitAsyncPersistenceStrategy(ConnectionFactory factory) {
+		this.factory = factory;
 	}
-
+	
 	@Override
-	public void close() throws Exception {
-		conn.close();
-	}
-
-	@Override
-	public void add(DetectionResult result) throws IOException {
+	public void add(DetectionResult result) throws IOException, TimeoutException {
+		ensureConnection();
 		String content = gson.toJson(result);
 		byte[] buffer = content.getBytes(utf8);
 		Channel channel = conn.createChannel();
@@ -52,6 +46,24 @@ public class RabbitAsyncPersistenceStrategy implements PersistenceStrategy {
 			channel.close();
 		} catch (TimeoutException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void ensureConnection() throws IOException, TimeoutException {
+		if (conn == null || !conn.isOpen()) {
+			conn = factory.newConnection();
+			try (Channel channel = conn.createChannel()) {
+				channel.exchangeDeclare(exchangeName, "fanout", true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		if (conn != null && conn.isOpen()) {
+			conn.close();
 		}
 	}
 }

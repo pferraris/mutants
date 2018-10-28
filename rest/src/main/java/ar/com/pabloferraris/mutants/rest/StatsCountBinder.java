@@ -11,6 +11,12 @@ public class StatsCountBinder extends AbstractBinder {
 	protected void configure() {
 		String elasticConnectionString = System.getenv("ELASTIC_CONNECTIONSTRING");
 		String memcachedConnectionString = System.getenv("MEMCACHED_CONNECTIONSTRING");
+		if (elasticConnectionString == null) {
+			elasticConnectionString = "http://localhost";
+		}
+		if (memcachedConnectionString == null) {
+			memcachedConnectionString = "localhost";
+		}
 		StatsCountStrategy source = new ElasticSearchStatsCountStrategy(elasticConnectionString);
 		StatsCountStrategy cache = new MemcachedStatsCountStrategy(memcachedConnectionString, source);
 		bind(cache).to(StatsCountStrategy.class);
