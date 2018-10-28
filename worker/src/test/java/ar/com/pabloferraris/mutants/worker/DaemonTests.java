@@ -22,7 +22,7 @@ public class DaemonTests
 {
 	@Test
 	public void createInstance() throws KeyManagementException, NoSuchAlgorithmException, URISyntaxException {
-		Daemon daemon = DaemonFactory.create();
+		Daemon daemon = new DaemonFactory().create();
 		assertFalse(daemon.isActive());
 		assertTrue(daemon.hasWorkers());
 	}
@@ -39,9 +39,9 @@ public class DaemonTests
         daemon.addWorker(new MockedDetectionResultConsumer(), Mockito.mock(PersistenceStrategy.class));
         assertFalse(daemon.isActive());
     }
-    
+
     @Test
-    public void isActive() throws InterruptedException {
+    public void isActive() {
         Daemon daemon = new Daemon();
         daemon.addWorker(new MockedDetectionResultConsumer(), Mockito.mock(PersistenceStrategy.class));
         daemon.run();
@@ -49,7 +49,7 @@ public class DaemonTests
     }
 
     @Test
-    public void processMessage() throws InterruptedException {
+    public void processMessage() {
         Daemon daemon = new Daemon();
         MockedDetectionResultConsumer consumer = new MockedDetectionResultConsumer();
         PersistenceStrategy persistence = Mockito.mock(PersistenceStrategy.class);
@@ -61,7 +61,7 @@ public class DaemonTests
     }
 
     @Test
-    public void persistenceException() throws InterruptedException, IOException, TimeoutException {
+    public void persistenceException() throws IOException, TimeoutException {
         Daemon daemon = new Daemon();
         MockedDetectionResultConsumer consumer = new MockedDetectionResultConsumer();
         PersistenceStrategy persistence = Mockito.mock(PersistenceStrategy.class);

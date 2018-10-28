@@ -10,7 +10,7 @@ import ar.com.pabloferraris.mutants.persistence.rabbit.RabbitDetectionResultCons
 
 public final class DaemonFactory {
 
-	public static final Daemon create() throws KeyManagementException, NoSuchAlgorithmException, URISyntaxException {
+	public Daemon create() throws KeyManagementException, NoSuchAlgorithmException, URISyntaxException {
 		String rabbitConnectionString = System.getenv("RABBIT_CONNECTIONSTRING");
 		String elasticConnectionString = System.getenv("ELASTIC_CONNECTIONSTRING");
 		String memcachedConnectionString = System.getenv("MEMCACHED_CONNECTIONSTRING");
