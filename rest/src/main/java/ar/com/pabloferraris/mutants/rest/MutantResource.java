@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -30,15 +29,6 @@ public class MutantResource {
 
 	@Inject
 	private PersistenceStrategy persistence;
-
-	/**
-	 * Check if service is alive
-	 * @return Response with status code 200 and detector strategy in use
-	 */
-	@GET
-	public Response isAlive() {
-		return Response.ok().build();
-	}
 
 	/**
 	 * Check if the DNA of a certain specimen corresponds to a mutant or not

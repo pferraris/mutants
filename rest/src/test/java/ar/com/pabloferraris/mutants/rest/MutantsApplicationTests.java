@@ -18,8 +18,8 @@ public class MutantsApplicationTests extends JerseyTest {
 	}
 
 	@Test
-	public void isAlive() {
-		Response response = target("mutant").request().get();
+	public void ping() {
+		Response response = target("ping").request().get();
         assertTrue(response.getStatus() == Status.OK.getStatusCode());
 	}
 
