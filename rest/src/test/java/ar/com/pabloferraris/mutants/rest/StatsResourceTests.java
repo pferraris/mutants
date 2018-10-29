@@ -49,8 +49,10 @@ public class StatsResourceTests extends JerseyTest {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> current = response.readEntity(Map.class);
         assertNotNull(current);
-        assertTrue(current.containsKey("ratio"));
-        assertEquals(expected.getRatio(), (double)current.get("ratio"), 0);
+        assertTrue(current.containsKey("count_mutant_dna"));
+        assertTrue(current.containsKey("count_human_dna"));
+        assertEquals(expected.getMutants(), current.get("count_mutant_dna"));
+        assertEquals(expected.getHumans(), current.get("count_human_dna"));
 	}
 
 }

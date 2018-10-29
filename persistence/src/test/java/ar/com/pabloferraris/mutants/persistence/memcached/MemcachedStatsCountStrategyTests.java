@@ -40,7 +40,6 @@ public class MemcachedStatsCountStrategyTests {
 		Stats current = statsCount.fetch();
 		assertEquals(expected.getHumans(), current.getHumans());
 		assertEquals(expected.getMutants(), current.getMutants());
-		assertEquals(expected.getRatio(), current.getRatio(), 0);
 		
 		statsCount.close();
 	}
