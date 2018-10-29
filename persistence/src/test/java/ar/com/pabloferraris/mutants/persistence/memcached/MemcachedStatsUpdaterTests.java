@@ -3,7 +3,6 @@ package ar.com.pabloferraris.mutants.persistence.memcached;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.BeforeClass;
@@ -43,7 +42,7 @@ public class MemcachedStatsUpdaterTests {
 		statsUpdater.close();
 	}
 
-	@Test(expected = IOException.class)
+	@Test
 	public void cannotExpireCache() throws Exception {
 		MemcachedStatsUpdater statsUpdater = createStatsUpdater();
 		

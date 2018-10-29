@@ -1,7 +1,9 @@
 package ar.com.pabloferraris.mutants.persistence.memcached;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ar.com.pabloferraris.mutants.persistence.PersistenceStrategy;
 import ar.com.pabloferraris.mutants.persistence.domain.DetectionResult;
@@ -10,6 +12,8 @@ import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
 
 public class MemcachedStatsUpdater implements PersistenceStrategy {
+	
+	private static final Logger logger = LogManager.getLogger(MemcachedStatsUpdater.class);
 	
 	private String connectionString;
 	private MemcachedClientIF client;
@@ -42,14 +46,11 @@ public class MemcachedStatsUpdater implements PersistenceStrategy {
 		String index = result.isMutant() ?
 				MemcachedStatsCountStrategy.MUTANTS :
 				MemcachedStatsCountStrategy.HUMANS;
-		boolean done;
 		try {
-			done = client.delete(index).get();
-		} catch (InterruptedException | ExecutionException e) {
-			done = false;
-		}
-		if (!done) {
-			throw new IOException("Cannot expire cache");
+			client.delete(index).get();
+			logger.info("Cache expired for " + index);
+		} catch (Exception e) {
+			logger.error("Error expiring cache for " + index, e);
 		}
 	}
 }

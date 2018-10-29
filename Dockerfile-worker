@@ -1,0 +1,6 @@
+FROM maven:3.5-jdk-8-alpine
+COPY . /src
+WORKDIR /src
+RUN mvn clean install
+WORKDIR /src/worker
+CMD [ "mvn", "exec:java" ]

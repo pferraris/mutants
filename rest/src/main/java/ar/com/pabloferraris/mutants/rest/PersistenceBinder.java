@@ -15,7 +15,7 @@ public class PersistenceBinder extends AbstractBinder {
 	protected void configure() {
 		String connectionString = System.getenv("RABBIT_CONNECTIONSTRING");
 		if (connectionString == null) {
-			connectionString = "amqp://localhost";
+			connectionString = "amqp://admin:admin@localhost";
 		}
 		try {
 			PersistenceStrategy persistence = new RabbitAsyncPersistenceStrategy(connectionString);

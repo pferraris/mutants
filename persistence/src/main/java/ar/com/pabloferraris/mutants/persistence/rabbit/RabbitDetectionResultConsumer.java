@@ -9,6 +9,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.rabbitmq.client.AMQP;
@@ -23,6 +26,7 @@ import ar.com.pabloferraris.mutants.persistence.domain.DetectionResult;
 
 public class RabbitDetectionResultConsumer implements DetectionResultConsumer {
 
+	private static final Logger logger = LogManager.getLogger(RabbitDetectionResultConsumer.class);
 	private static final Charset utf8 = Charset.forName("UTF-8");
 	private static final Gson gson = new Gson();
 	private static final String exchangeName = "DetectionResults";
@@ -55,7 +59,7 @@ public class RabbitDetectionResultConsumer implements DetectionResultConsumer {
 			channel.queueDeclare(queueName, true, false, false, null);
 			channel.queueBind(queueName, exchangeName, "");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error setting up exchange and queue", e);
 		}
 	}
 
@@ -68,7 +72,7 @@ public class RabbitDetectionResultConsumer implements DetectionResultConsumer {
 				channel.basicConsume(queueName, false, consumerTag, internalConsumer);
 				return true;
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Error starting consumer", e);
 			}
 		}
 		return false;
@@ -81,7 +85,7 @@ public class RabbitDetectionResultConsumer implements DetectionResultConsumer {
 				channel.close();
 				conn.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Error stopping consumer", e);
 			} finally {
 				consumerTag = null;
 			}
@@ -111,6 +115,7 @@ public class RabbitDetectionResultConsumer implements DetectionResultConsumer {
 			String content = new String(body, utf8);
 			try {
 				DetectionResult result = gson.fromJson(content, DetectionResult.class);
+				logger.info("DetectionResult arribed on" + queueName);
 				if (predicate.test(result)) {
 					channel.basicAck(deliveryTag, false);
 				} else {
@@ -119,7 +124,7 @@ public class RabbitDetectionResultConsumer implements DetectionResultConsumer {
 			} catch (JsonSyntaxException e) {
 				// This message is corrupt and must not be requeue
 				channel.basicReject(deliveryTag, false);
-				e.printStackTrace();
+				logger.error("JSON syntax error", e);
 			}
 		}
 	}

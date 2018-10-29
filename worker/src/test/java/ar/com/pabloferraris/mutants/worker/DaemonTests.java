@@ -21,7 +21,7 @@ import ar.com.pabloferraris.mutants.persistence.domain.DetectionResult;
 public class DaemonTests 
 {
 	@Test
-	public void createInstance() throws KeyManagementException, NoSuchAlgorithmException, URISyntaxException {
+	public void createInstanceWithFactory() throws KeyManagementException, NoSuchAlgorithmException, URISyntaxException {
 		Daemon daemon = new DaemonFactory().create();
 		assertFalse(daemon.isActive());
 		assertTrue(daemon.hasWorkers());
@@ -31,6 +31,7 @@ public class DaemonTests
     public void isNotActiveWithEmpty() {
         Daemon daemon = new Daemon();
         assertFalse(daemon.isActive());
+        assertFalse(daemon.hasWorkers());
     }
 
     @Test

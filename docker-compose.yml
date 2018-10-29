@@ -24,3 +24,33 @@ services:
     restart: on-failure
     ports:
       - "11211:11211"
+      
+  rest:
+    build:
+      context: .
+      dockerfile: Dockerfile-rest
+    depends_on:
+      - rabbitmq
+      - elasticsearch
+      - memcached
+    restart: on-failure
+    environment:
+      RABBIT_CONNECTIONSTRING: amqp://admin:admin@rabbitmq
+      ELASTIC_CONNECTIONSTRING: http://elasticsearch:9200
+      MEMCACHED_CONNECTIONSTRING: memcached:11211
+    ports:
+      - "8080:8080"
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-worker
+    depends_on:
+      - rabbitmq
+      - elasticsearch
+      - memcached
+    restart: on-failure
+    environment:
+      RABBIT_CONNECTIONSTRING: amqp://admin:admin@rabbitmq
+      ELASTIC_CONNECTIONSTRING: http://elasticsearch:9200
+      MEMCACHED_CONNECTIONSTRING: memcached:11211

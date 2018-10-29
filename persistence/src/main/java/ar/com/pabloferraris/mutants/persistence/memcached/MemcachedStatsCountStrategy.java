@@ -2,6 +2,9 @@ package ar.com.pabloferraris.mutants.persistence.memcached;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import ar.com.pabloferraris.mutants.persistence.StatsCountStrategy;
 import ar.com.pabloferraris.mutants.persistence.domain.Stats;
 import net.spy.memcached.AddrUtil;
@@ -9,6 +12,8 @@ import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
 
 public class MemcachedStatsCountStrategy implements StatsCountStrategy {
+	
+	private static final Logger logger = LogManager.getLogger(MemcachedStatsCountStrategy.class);
 	static final String MUTANTS = "mutants";
 	static final String HUMANS = "humans";
 
@@ -48,15 +53,18 @@ public class MemcachedStatsCountStrategy implements StatsCountStrategy {
 			Integer humans = (Integer) client.get(HUMANS);
 			if (mutants != null && humans != null) {
 				stats = new Stats(mutants, humans);
+				logger.info("Stats fetched from memcached");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error fetching stats from memcached", e);
 		}
 		if (stats == null) {
 			stats = source.fetch();
+			logger.info("Stats not found in memcached but fetched from source");
 			if (client != null) {
 				client.add("mutants", 60 * 60, stats.getMutants());
 				client.add("humans", 60 * 60, stats.getHumans());
+				logger.info("Stats appended on memcached");
 			}
 		}
 		return stats;

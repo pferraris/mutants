@@ -2,6 +2,7 @@ package ar.com.pabloferraris.mutants.persistence.elastic;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class ElasticSearchStatsCountStrategyTests {
 		}
 		
 		@Override
-		protected String requestContent(Request request) {
+		protected String requestContent(Request request) throws IOException {
 			String index = request.getEndpoint().replace("_count", "").replace("/", "");
 			ElasticEntity response;
 			if (expected.containsKey(index)) {

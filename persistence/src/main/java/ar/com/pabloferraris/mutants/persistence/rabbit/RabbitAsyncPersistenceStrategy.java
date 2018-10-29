@@ -10,13 +10,17 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 
 public class RabbitAsyncPersistenceStrategy implements PersistenceStrategy {
-
+	
+	private static final Logger logger = LogManager.getLogger(RabbitAsyncPersistenceStrategy.class);
 	private static final String exchangeName = "DetectionResults";
 	private static final Charset utf8 = Charset.forName("UTF-8");
 	private static final Gson gson = new Gson();
@@ -42,10 +46,11 @@ public class RabbitAsyncPersistenceStrategy implements PersistenceStrategy {
 		byte[] buffer = content.getBytes(utf8);
 		Channel channel = conn.createChannel();
 		channel.basicPublish(exchangeName, String.valueOf(result.isMutant()), null, buffer);
+		logger.info("Detection result published on " + exchangeName);
 		try {
 			channel.close();
 		} catch (TimeoutException e) {
-			e.printStackTrace();
+			logger.error("Error closing channel", e);
 		}
 	}
 
@@ -55,7 +60,7 @@ public class RabbitAsyncPersistenceStrategy implements PersistenceStrategy {
 			try (Channel channel = conn.createChannel()) {
 				channel.exchangeDeclare(exchangeName, "fanout", true);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Error setting up exchange", e);
 			}
 		}
 	}

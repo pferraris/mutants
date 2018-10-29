@@ -6,13 +6,18 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import ar.com.pabloferraris.mutants.persistence.DetectionResultConsumer;
 import ar.com.pabloferraris.mutants.persistence.PersistenceStrategy;
+import ar.com.pabloferraris.mutants.persistence.rabbit.RabbitDetectionResultConsumer;
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 
 public class Daemon {
-
+	private static final Logger logger = LogManager.getLogger(Daemon.class);
+	
 	private Map<DetectionResultConsumer, PersistenceStrategy> workers;
 
 	public Daemon() {
@@ -36,7 +41,7 @@ public class Daemon {
 				try {
 					workers.get(consumer).close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Error closing persistence",  e);
 				}
 			}
 		}));
@@ -49,7 +54,7 @@ public class Daemon {
 					workers.get(consumer).add(result);
 					return true;
 				} catch (IOException | TimeoutException e) {
-					e.printStackTrace();
+					logger.error("Error adding result to persistence",  e);
 					return false;
 				}
 			});
