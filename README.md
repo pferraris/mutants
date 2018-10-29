@@ -31,7 +31,7 @@ _Returns:_
 }
 ```
 
-### __Get stats of detections performed:__
+### __Perform mutant detection over a DNA sample:__
 ``` http
 POST /mutant
 ```
