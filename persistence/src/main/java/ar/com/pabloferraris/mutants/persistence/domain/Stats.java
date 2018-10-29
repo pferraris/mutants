@@ -30,6 +30,6 @@ public class Stats {
 		if (humans == 0) {
 			return 0;
 		}
-		return mutants / humans;
+		return mutants / (float)humans;
 	}
 }
