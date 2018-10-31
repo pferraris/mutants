@@ -51,7 +51,7 @@ _Returns:_
 
 A demo solution coul be found hosted on:
 ```
-http://mutants.southcentralus.cloudapp.azure.com/
+http://detection.southcentralus.cloudapp.azure.com/
 ```
 
 # Testing locally with Docker
