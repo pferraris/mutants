@@ -135,6 +135,18 @@ mvn jetty:stop
 
 You can also use two independent consoles. Remember to set environment variables in both.
 
+# Commponents Interaction
+
+![Commponents Interaction](Interaction.png)
+
+In order to scale the application and satisfy high demands, it is recommended to place the necessary instances of the REST API behind a load balancer.
+
+For the /mutant endpoint, the REST API will perform DNA detection by itself, place the result in the messaging broker and return the result to the client.
+
+The worker process will consume messages from the messaging broker. Then, it will carry out the insertion of the results in the storage and will update the cache. The results already existing in the storage will not be duplicated because the ID is a unique hash for each DNA.
+
+For the endpoint / stats, the REST API will query in the cache first in order to find the result. If it was not found, it will query the storage and update the cache.
+
 # Using the library in your project
 
 __detection__ is an artifact writen in Java 8. It performs validations over the DNA sample and determine whether a DNA sample belongs to a mutant or not.
