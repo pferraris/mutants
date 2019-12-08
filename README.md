@@ -1,6 +1,6 @@
 # Mutants Detector
 
-[![Build Status](https://github.com/pferraris/mutants/workflows/Build/badge.svg)
+[![Build Status](https://github.com/pferraris/mutants/workflows/Build/badge.svg)](https://github.com/pferraris/mutants/actions?query=workflow%3A"Build")
 [![codecov](https://codecov.io/gh/pferraris/mutants/branch/master/graph/badge.svg)](https://codecov.io/gh/pferraris/mutants)
 
 API to detect mutants based on their DNA.
